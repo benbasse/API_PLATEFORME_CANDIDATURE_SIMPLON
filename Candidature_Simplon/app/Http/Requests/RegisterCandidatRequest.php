@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class RegisterCandidatRequest extends FormRequest
 {
@@ -11,7 +13,18 @@ class RegisterCandidatRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
+    }
+
+
+    public function failedValidation(Validator $validator ){
+        throw new HttpResponseException(response()->json([
+            'success'=>false,
+            'status_code'=>422,
+            'error'=>true,
+            'message'=>'erreur de validation',
+            'errorList'=>$validator->errors()
+        ]));
     }
 
     /**
@@ -22,7 +35,25 @@ class RegisterCandidatRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'nom'=> 'required',
+            'telephone' =>'required|regex:/^7[0-9]{8}$/|unique:candidats,telephone',
+            'email'=>'required|unique:users,email|email',
+            'password'=> 'required'
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'nom.required'=> 'le nom est requis',
+            'email.required'=>'l\'email est requis',
+            'email.unique'=>'l\'email existe déja',
+            'email.email'=>"format email incorrect",
+            'password.required'=>'le mot de passe est requis',
+            'password.regex'=>"le mot de passe doit contenir au moins 8 caractéres avec un chiffre, une lettre et un caractére spécial",
+            'telephone.unique'=>'le numéro telephone est deja utilisé',
+            'telephone.required'=>'le numéro de téléphone est requis',
+            'telephone.regex'=>'le format du numéro est incorrect',
         ];
     }
 }

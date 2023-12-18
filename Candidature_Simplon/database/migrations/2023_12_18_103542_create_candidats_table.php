@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('candidats', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('nom');
+            $table->integer('telephone');
             $table->string('role')->default('user');
             $table->boolean('is_accepted')->default(false);
             $table->string('email')->unique();

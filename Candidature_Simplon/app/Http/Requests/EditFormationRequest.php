@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class EditFormationRequest extends FormRequest
 {
@@ -11,7 +13,7 @@ class EditFormationRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +24,28 @@ class EditFormationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'libelle'=> 'required',
+            'description'=> 'required',
+            'duree'=> 'required',
+        ];
+    }
+
+    public function failedValidation(Validator $validator ){
+        throw new HttpResponseException(response()->json([
+            'success'=>false,
+            'status_code'=>422,
+            'error'=>true,
+            'message'=>'erreur de validation',
+            'errorList'=>$validator->errors()
+        ]));
+    }
+
+    public function messages()
+    {
+        return [
+            'libelle.required'=> "le libelle ne peut pas être null",
+            'description.required'=> "la description est requis",
+            'duree.required'=> "la duree est requis"
         ];
     }
 }

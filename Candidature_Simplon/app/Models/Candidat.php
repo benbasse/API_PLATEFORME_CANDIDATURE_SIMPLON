@@ -3,9 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 
-class Candidat extends Model
+class Candidat extends Authenticatable
 {
     use HasFactory;
 
@@ -15,7 +16,8 @@ class Candidat extends Model
     }
 
     protected $fillable = [
-        'name',
+        'nom',
+        'telephone',
         'is_accepted',
         'email',
         'password'
